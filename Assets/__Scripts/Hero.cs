@@ -124,6 +124,14 @@ public class Hero : MonoBehaviour {
                     weapons[0].SetType(pu.type);
                 }
                 break;
+
+            case WeaponType.speedup:
+                if (speed >= 60)
+                {
+                    speed = speed + 0;
+                }
+                else { speed = speed + 5; }
+                break;
         }
         pu.AbsorbedBy(gameObject);
     }
