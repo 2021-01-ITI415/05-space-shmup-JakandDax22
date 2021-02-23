@@ -12,6 +12,8 @@ public class Enemy_5 : Enemy {
     public float waveWidth = 4;
     public float waveRotY = 45;
 
+    public GameObject shipPrefab;
+
     private float x0; // The initial x value of pos
     private float birthTime;
 
@@ -44,6 +46,63 @@ public class Enemy_5 : Enemy {
 
         // print (bndCheck.isOnScreen);
 
+    }
+
+
+    private void OnCollisionEnter(Collision coll)
+    {
+        GameObject otherGO = coll.gameObject;
+        switch (otherGO.tag)
+        {
+            case "ProjectileHero":
+                Projectile p = otherGO.GetComponent<Projectile>();
+                // If this Enemy is off screen, don't damage it.
+                if (!bndCheck.isOnScreen)
+                {
+                    Destroy(otherGO);
+                    break;
+                }
+
+                // Hurt this Enemy
+                ShowDamage();
+                // Get the damage amount from the Main WEAP_DICT
+                health -= Main.GetWeaponDefinition(p.type).damageOnHit;
+                if (health <= 0)
+                {
+                    //Create a smaller enemy ship
+                    smallShip();
+                    // Tell the Main singleton that this ship was destroyed
+                    if (!notifiedOfDestruction)
+                    {
+                        Main.S.ShipDestroyed(this);
+                    }
+                    notifiedOfDestruction = true;
+                    // Destroy this enemy
+                    Destroy(this.gameObject);
+                }
+                Destroy(otherGO);
+                break;
+
+            default:
+                print("Enemy hit by non-ProjectileHero: " + otherGO.name);
+                break;
+        }
+    }
+    void ShowDamage()
+    {
+        foreach (Material m in materials)
+        {
+            m.color = Color.red;
+        }
+        showingDamage = true;
+        damageDoneTime = Time.time + showDamageDuration;
+    }
+
+    void smallShip()
+    {
+        //Instantiate Enemy 1
+        shipPrefab.transform.position = this.gameObject.transform.position;
+        GameObject.Instantiate(shipPrefab);
     }
 }
 

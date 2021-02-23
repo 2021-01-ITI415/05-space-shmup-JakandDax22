@@ -130,7 +130,7 @@ public class Hero : MonoBehaviour {
                 {
                     speed = speed + 0;
                 }
-                else { speed = speed + 5; }
+                else { speed = speed + 10; }
                 break;
         }
         pu.AbsorbedBy(gameObject);
